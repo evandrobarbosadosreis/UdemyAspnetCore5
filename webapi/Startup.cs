@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using webapi.Data;
 using webapi.Interfaces;
 using webapi.Services;
 
@@ -22,6 +24,7 @@ namespace webapi
         {
             services.AddControllers();
             services.AddScoped<IPessoaService, PessoaService>();
+            services.AddDbContext<DataContext>(options => options.UseInMemoryDatabase("dbname"));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "webapi", Version = "v1" });
