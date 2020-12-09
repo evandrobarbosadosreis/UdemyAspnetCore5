@@ -55,7 +55,15 @@ namespace webapi.Controllers
             {
                 return BadRequest();
             }
-            return Ok(_service.Atualizar(pessoa));
+
+            var resultado = _service.Atualizar(pessoa);
+
+            if (resultado == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(resultado);
         }
 
         [Route("{id:int}")]
