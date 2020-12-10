@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using webapi.Models;
+using webapi.DTO;
 
 namespace webapi.Business.Interfaces
 {
     public interface ILivroBusiness
     {
-         ValueTask<Livro> BuscarPorId(int id);
-         Task<List<Livro>> BuscarTodos();
-         Task<bool> Salvar(Livro livro);
-         Task<bool> Atualizar(Livro livro);
+         ValueTask<LivroDTO> BuscarPorId(int id);
+         Task<IEnumerable<LivroDTO>> BuscarTodos();
+         Task<bool> Salvar(LivroDTO source);
+         Task<bool> Atualizar(LivroDTO source);
          Task<bool> Excluir(int id);
          Task<bool> RegistroExiste(int id);
     }    

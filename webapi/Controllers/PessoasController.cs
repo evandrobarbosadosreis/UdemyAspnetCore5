@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using webapi.Business.Interfaces;
-using webapi.Models;
+using webapi.DTO;
 
 namespace webapi.Controllers
 {
@@ -40,7 +40,7 @@ namespace webapi.Controllers
 
         [Route("")]
         [HttpPost]
-        public async Task<IActionResult> Post(Pessoa pessoa)
+        public async Task<IActionResult> Post(PessoaDTO pessoa)
         {
             var sucesso = await _business.Salvar(pessoa);
             
@@ -53,7 +53,7 @@ namespace webapi.Controllers
 
         [Route("")]
         [HttpPut]
-        public async Task<IActionResult> Put(Pessoa pessoa)
+        public async Task<IActionResult> Put(PessoaDTO pessoa)
         {
             if (pessoa == null)
             {

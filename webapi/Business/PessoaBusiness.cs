@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using webapi.Business.Interfaces;
 using webapi.Data.Interfaces;
+using webapi.DTO;
+using webapi.DTO.Parser;
 using webapi.Models;
 
 namespace webapi.Business
@@ -12,25 +14,42 @@ namespace webapi.Business
     public class PessoaBusiness : IPessoaBusiness
     {
         private readonly IRepository<Pessoa> _repository;
+        private readonly PessoaParser _parser;
 
         public PessoaBusiness(IRepository<Pessoa> repository)
         {
             _repository = repository;
+            _parser     = new PessoaParser();
         }
 
-        public Task<bool> Atualizar(Pessoa pessoa)
+        public async Task<bool> Salvar(PessoaDTO source)
         {
+            var pessoa = _parser.Parse(source);
+            var sucesso = await _repository.Salvar(pessoa);
+
+            if (sucesso)
+            {
+                source.Id = pessoa.Id;
+            }
+            return sucesso;
+        }
+
+        public Task<bool> Atualizar(PessoaDTO source)
+        {
+            var pessoa = _parser.Parse(source);
             return _repository.Atualizar(pessoa);
         }
 
-        public ValueTask<Pessoa> BuscarPorId(int id)
+        public async ValueTask<PessoaDTO> BuscarPorId(int id)
         {
-            return _repository.BuscarPorId(id);
+            var pessoa = await _repository.BuscarPorId(id);
+            return _parser.Parse(pessoa);
         }
 
-        public Task<List<Pessoa>> BuscarTodos()
+        public async Task<IEnumerable<PessoaDTO>> BuscarTodos()
         {
-            return _repository.BuscarTodos();
+            var pessoas = await _repository.BuscarTodos();
+            return _parser.Parse(pessoas);
         }
 
         public Task<bool> Excluir(int id)
@@ -41,11 +60,6 @@ namespace webapi.Business
         public Task<bool> RegistroExiste(int id)
         {
             return _repository.RegistroExiste(id);
-        }
-
-        public Task<bool> Salvar(Pessoa pessoa)
-        {
-            return _repository.Salvar(pessoa);
         }
     }
 }
