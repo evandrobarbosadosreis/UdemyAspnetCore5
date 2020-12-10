@@ -56,7 +56,7 @@ namespace webapi
             app.UseRouting();
             app.UseCors(); // A grande sacada é que a config. do cors tem local correto pra ficar
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "webapi v1"));
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("../swagger/v1/swagger.json", "webapi v1"));
             app.UseRewriter(new RewriteOptions().AddRedirect("^$", "swagger"));
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
