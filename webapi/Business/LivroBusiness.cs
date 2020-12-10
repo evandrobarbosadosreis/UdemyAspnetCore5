@@ -9,26 +9,26 @@ namespace webapi.Business
     /// <summary>
     /// Lógica de negócio vai aqui
     /// </summary>
-    public class PessoaBusiness : IPessoaBusiness
+    public class LivroBusiness : ILivroBusiness
     {
-        private readonly IRepository<Pessoa> _repository;
+        private readonly IRepository<Livro> _repository;
 
-        public PessoaBusiness(IRepository<Pessoa> repository)
+        public LivroBusiness(IRepository<Livro> repository)
         {
             _repository = repository;
         }
 
-        public Task<bool> Atualizar(Pessoa pessoa)
+        public Task<bool> Atualizar(Livro livro)
         {
-            return _repository.Atualizar(pessoa);
+            return _repository.Atualizar(livro);
         }
 
-        public ValueTask<Pessoa> BuscarPorId(int id)
+        public ValueTask<Livro> BuscarPorId(int id)
         {
             return _repository.BuscarPorId(id);
         }
 
-        public Task<List<Pessoa>> BuscarTodos()
+        public Task<List<Livro>> BuscarTodos()
         {
             return _repository.BuscarTodos();
         }
@@ -43,9 +43,9 @@ namespace webapi.Business
             return _repository.RegistroExiste(id);
         }
 
-        public Task<bool> Salvar(Pessoa pessoa)
+        public Task<bool> Salvar(Livro livro)
         {
-            return _repository.Salvar(pessoa);
+            return _repository.Salvar(livro);
         }
     }
 }

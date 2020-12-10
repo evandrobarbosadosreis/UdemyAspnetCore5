@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using webapi.Business.Interfaces;
 using webapi.Models;
@@ -7,11 +7,11 @@ namespace webapi.Controllers
 {
     [Route("api/[controller]/v1")]
     [ApiController]
-    public class PessoasController : ControllerBase
+    public class LivrosController : ControllerBase
     {
-        private readonly IPessoaBusiness _business;
+        private readonly ILivroBusiness _business;
 
-        public PessoasController(IPessoaBusiness business)
+        public LivrosController(ILivroBusiness business)
         {
             _business = business;
         }
@@ -20,54 +20,54 @@ namespace webapi.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var pessoas = await _business.BuscarTodos();
+            var livros = await _business.BuscarTodos();
             
-            return Ok(pessoas);
+            return Ok(livros);
         }
 
         [Route("{id:int}")]
         [HttpGet]
         public async Task<IActionResult> Get(int id)
         {
-            var pessoa = await _business.BuscarPorId(id);
+            var livro = await _business.BuscarPorId(id);
             
-            if (pessoa == null)
+            if (livro == null)
             {
                 return NotFound();
             }
-            return Ok(pessoa);
+            return Ok(livro);
         }
 
         [Route("")]
         [HttpPost]
-        public async Task<IActionResult> Post(Pessoa pessoa)
+        public async Task<IActionResult> Post(Livro livro)
         {
-            var sucesso = await _business.Salvar(pessoa);
+            var sucesso = await _business.Salvar(livro);
             
             if (sucesso)
             {
-                return Ok(pessoa);
+                return Ok(livro);
             }
             return BadRequest();            
         }
 
         [Route("")]
         [HttpPut]
-        public async Task<IActionResult> Put(Pessoa pessoa)
+        public async Task<IActionResult> Put(Livro livro)
         {
-            if (pessoa == null)
+            if (livro == null)
             {
                 return BadRequest();
             }
 
-            var existe = await _business.RegistroExiste(pessoa.Id);
+            var existe = await _business.RegistroExiste(livro.Id);
 
             if (!existe)
             {
                 return NotFound();
             }
 
-            var sucesso = await _business.Atualizar(pessoa);
+            var sucesso = await _business.Atualizar(livro);
 
             if (sucesso)
             {
@@ -95,5 +95,6 @@ namespace webapi.Controllers
             }        
             return BadRequest();               
         }        
+
     }
 }

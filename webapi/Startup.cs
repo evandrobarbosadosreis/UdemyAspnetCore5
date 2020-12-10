@@ -24,8 +24,9 @@ namespace webapi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddScoped<IPessoaRepository, PessoaRepository>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));         
             services.AddScoped<IPessoaBusiness, PessoaBusiness>();
+            services.AddScoped<ILivroBusiness, LivroBusiness>();
             services.AddDbContext<DataContext>(options => options.UseInMemoryDatabase("database"));
             services.AddSwaggerGen(c =>
             {
