@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using webapi.Interfaces;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using webapi.Business.Interfaces;
 using webapi.Models;
 
 namespace webapi.Controllers
@@ -8,26 +9,28 @@ namespace webapi.Controllers
     [ApiController]
     public class PessoasController : ControllerBase
     {
-        private readonly IPessoaService _service;
+        private readonly IPessoaBusiness _business;
 
-        public PessoasController(IPessoaService service)
+        public PessoasController(IPessoaBusiness business)
         {
-            _service = service;
+            _business = business;
         }
 
         [Route("")]
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var pessoas = _service.BuscarTodos();
+            var pessoas = await _business.BuscarTodos();
+            
             return Ok(pessoas);
         }
 
         [Route("{id:int}")]
         [HttpGet]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var pessoa = _service.BuscarPorId(id);
+            var pessoa = await _business.BuscarPorId(id);
+            
             if (pessoa == null)
             {
                 return NotFound();
@@ -37,45 +40,41 @@ namespace webapi.Controllers
 
         [Route("")]
         [HttpPost]
-        public IActionResult Post(Pessoa pessoa)
+        public async Task<IActionResult> Post(Pessoa pessoa)
         {
-            if (pessoa == null)
+            var sucesso = await _business.Salvar(pessoa);
+            
+            if (sucesso)
             {
-                return BadRequest();
+                return Ok(pessoa);
             }
-            return Ok(_service.Salvar(pessoa));
+            return BadRequest();            
         }
 
         [Route("")]
         [HttpPut]
-        public IActionResult Put(Pessoa pessoa)
+        public async Task<IActionResult> Put(Pessoa pessoa)
         {
-            if (pessoa == null)
+            var sucesso = await _business.Atualizar(pessoa);
+
+            if (sucesso)
             {
-                return BadRequest();
+                return NoContent();
             }
-
-            var resultado = _service.Atualizar(pessoa);
-
-            if (resultado == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(resultado);
+            return BadRequest();
         }
 
         [Route("{id:int}")]
         [HttpDelete]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var pessoa = _service.BuscarPorId(id);
-            if (pessoa == null)
+            var sucesso = await _business.Excluir(id);
+
+            if (sucesso)
             {
-                return NotFound();
-            }
-            _service.Excluir(pessoa);
-            return NoContent();
+                return NoContent();
+            }        
+            return BadRequest();            
         }        
 
     }

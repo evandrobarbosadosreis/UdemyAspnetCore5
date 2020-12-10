@@ -5,9 +5,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using webapi.Business;
+using webapi.Business.Interfaces;
 using webapi.Data;
-using webapi.Interfaces;
-using webapi.Services;
+using webapi.Data.Interfaces;
 
 namespace webapi
 {
@@ -23,8 +24,9 @@ namespace webapi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddScoped<IPessoaService, PessoaService>();
-            services.AddDbContext<DataContext>(options => options.UseInMemoryDatabase("dbname"));
+            services.AddScoped<IPessoaRepository, PessoaRepository>();
+            services.AddScoped<IPessoaBusiness, PessoaBusiness>();
+            services.AddDbContext<DataContext>(options => options.UseInMemoryDatabase("database"));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "webapi", Version = "v1" });
@@ -39,7 +41,6 @@ namespace webapi
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "webapi v1"));
             }
-
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
