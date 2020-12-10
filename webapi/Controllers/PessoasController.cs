@@ -20,8 +20,17 @@ namespace webapi.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var pessoas = await _business.BuscarTodos();
-            
+            var pessoas = await _business
+                .BuscarTodos();
+            return Ok(pessoas);
+        }
+
+        [Route("por-nome")]
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery] string nome = "")
+        {
+            var pessoas = await _business
+                .BuscarPorNome(nome);
             return Ok(pessoas);
         }
 

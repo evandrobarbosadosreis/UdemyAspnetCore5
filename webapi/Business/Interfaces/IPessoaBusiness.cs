@@ -9,6 +9,7 @@ namespace webapi.Business.Interfaces
     {
          ValueTask<PessoaDTO> BuscarPorId(int id);
          Task<IEnumerable<PessoaDTO>> BuscarTodos();
+        Task<IEnumerable<PessoaDTO>> BuscarPorNome(string nome);
          Task<bool> Salvar(PessoaDTO source);
          Task<bool> Atualizar(PessoaDTO source);
          Task<bool> Excluir(int id);

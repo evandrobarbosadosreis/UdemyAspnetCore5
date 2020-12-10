@@ -13,10 +13,10 @@ namespace webapi.Business
     /// </summary>
     public class PessoaBusiness : IPessoaBusiness
     {
-        private readonly IRepository<Pessoa> _repository;
+        private readonly IPessoaRepository _repository;
         private readonly PessoaParser _parser;
 
-        public PessoaBusiness(IRepository<Pessoa> repository)
+        public PessoaBusiness(IPessoaRepository repository)
         {
             _repository = repository;
             _parser     = new PessoaParser();
@@ -49,6 +49,12 @@ namespace webapi.Business
         public async Task<IEnumerable<PessoaDTO>> BuscarTodos()
         {
             var pessoas = await _repository.BuscarTodos();
+            return _parser.Parse(pessoas);
+        }
+
+        public async Task<IEnumerable<PessoaDTO>> BuscarPorNome(string nome)
+        {
+            var pessoas = await _repository.BuscarPorNome(nome);
             return _parser.Parse(pessoas);
         }
 

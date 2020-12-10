@@ -34,12 +34,17 @@ namespace webapi
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // outros serviços
             services.AddCors(ConfigureCorsOptions);
             services.AddControllers();
+            // data
+            services.AddDbContext<DataContext>(options => options.UseInMemoryDatabase("database"));            
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));         
+            services.AddScoped<IPessoaRepository, PessoaRepository>();
+            // business
             services.AddScoped<IPessoaBusiness, PessoaBusiness>();
             services.AddScoped<ILivroBusiness, LivroBusiness>();
-            services.AddDbContext<DataContext>(options => options.UseInMemoryDatabase("database"));
+            // swagger
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "webapi", Version = "v1" });
