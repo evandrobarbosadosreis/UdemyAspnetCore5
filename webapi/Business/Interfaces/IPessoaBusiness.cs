@@ -6,10 +6,11 @@ namespace webapi.Business.Interfaces
 {
     public interface IPessoaBusiness
     {
-         Task<Pessoa> BuscarPorId(int id);
-         Task<IEnumerable<Pessoa>> BuscarTodos();
+         ValueTask<Pessoa> BuscarPorId(int id);
+         Task<List<Pessoa>> BuscarTodos();
          Task<bool> Salvar(Pessoa pessoa);
          Task<bool> Atualizar(Pessoa pessoa);
          Task<bool> Excluir(int id);
+         Task<bool> RegistroExiste(int id);
     }   
 }

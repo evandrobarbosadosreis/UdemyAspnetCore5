@@ -55,6 +55,18 @@ namespace webapi.Controllers
         [HttpPut]
         public async Task<IActionResult> Put(Pessoa pessoa)
         {
+            if (pessoa == null)
+            {
+                return BadRequest();
+            }
+
+            var existe = await _business.RegistroExiste(pessoa.Id);
+
+            if (!existe)
+            {
+                return NotFound();
+            }
+
             var sucesso = await _business.Atualizar(pessoa);
 
             if (sucesso)
@@ -68,13 +80,20 @@ namespace webapi.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
+            var existe = await _business.RegistroExiste(id);
+
+            if (!existe)
+            {
+                return NotFound();
+            }
+
             var sucesso = await _business.Excluir(id);
 
             if (sucesso)
             {
                 return NoContent();
             }        
-            return BadRequest();            
+            return BadRequest();               
         }        
 
     }

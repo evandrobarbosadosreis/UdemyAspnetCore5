@@ -11,36 +11,41 @@ namespace webapi.Business
     /// </summary>
     public class PessoaBusiness : IPessoaBusiness
     {
-        private readonly IPessoaRepository _repo;
+        private readonly IPessoaRepository _repository;
 
         public PessoaBusiness(IPessoaRepository repository)
         {
-            _repo = repository;
+            _repository = repository;
         }
 
         public Task<bool> Atualizar(Pessoa pessoa)
         {
-            return _repo.Atualizar(pessoa);
+            return _repository.Atualizar(pessoa);
         }
 
-        public Task<Pessoa> BuscarPorId(int id)
+        public ValueTask<Pessoa> BuscarPorId(int id)
         {
-            return _repo.BuscarPorId(id);
+            return _repository.BuscarPorId(id);
         }
 
-        public Task<IEnumerable<Pessoa>> BuscarTodos()
+        public Task<List<Pessoa>> BuscarTodos()
         {
-            return _repo.BuscarTodos();
+            return _repository.BuscarTodos();
         }
 
         public Task<bool> Excluir(int id)
         {
-            return _repo.Excluir(id);
+            return _repository.Excluir(id);
+        }
+
+        public Task<bool> RegistroExiste(int id)
+        {
+            return _repository.RegistroExiste(id);
         }
 
         public Task<bool> Salvar(Pessoa pessoa)
         {
-            return _repo.Salvar(pessoa);
+            return _repository.Salvar(pessoa);
         }
     }
 }
