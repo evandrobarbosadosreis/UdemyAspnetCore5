@@ -16,12 +16,14 @@ namespace webapi.Controllers
             _business = business;
         }
 
-        [Route("")]
+        [Route("{paginaAtual:min(1)}/{itensPagina:min(5)}")]
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(int paginaAtual, int itensPagina, [FromQuery] string nome)
         {
-            var livros = await _business.BuscarTodos();
-            
+            var livros = await _business.BuscarTodos(
+                nome, 
+                paginaAtual, 
+                itensPagina);
             return Ok(livros);
         }
 

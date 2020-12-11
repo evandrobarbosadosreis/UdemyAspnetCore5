@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using webapi.Data.Interfaces;
@@ -23,9 +25,24 @@ namespace webapi.Data
             return _dataset.FindAsync(id);
         }
 
-        public Task<List<TEntidade>> BuscarTodos()
+
+        public Task<int> BuscarCount(Expression<System.Func<TEntidade, bool>> filtro)
         {
-            return _dataset.ToListAsync();
+            return _dataset.CountAsync(filtro);
+        }
+
+        public Task<List<TEntidade>> BuscarTodos(Expression<System.Func<TEntidade, bool>> filtro, int paginaAtual, int itensPorPagina)
+        {
+            int take = itensPorPagina;
+            int skip = (paginaAtual - 1) * take;
+
+            return _dataset
+                .AsNoTracking()
+                .Where(filtro)
+                .Skip(skip)
+                .Take(take)
+                .OrderBy(e => e.Id)
+                .ToListAsync();
         }
 
         public Task<bool> RegistroExiste(int id)

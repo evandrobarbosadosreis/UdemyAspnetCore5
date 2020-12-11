@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using webapi.Business.Interfaces;
 using webapi.Data.Interfaces;
@@ -13,10 +15,16 @@ namespace webapi.Business
     /// </summary>
     public class PessoaBusiness : IPessoaBusiness
     {
-        private readonly IPessoaRepository _repository;
+        private readonly IRepository<Pessoa> _repository;
         private readonly PessoaParser _parser;
 
-        public PessoaBusiness(IPessoaRepository repository)
+        private Expression<Func<Pessoa, bool>> BuscarCondicaoPesquisa(string nome)
+        {
+            var filtro = nome?.ToLower() ?? "";
+            return pessoa => pessoa.Nome.ToLower().Contains(filtro);
+        }
+
+        public PessoaBusiness(IRepository<Pessoa> repository)
         {
             _repository = repository;
             _parser     = new PessoaParser();
@@ -46,16 +54,18 @@ namespace webapi.Business
             return _parser.Parse(pessoa);
         }
 
-        public async Task<IEnumerable<PessoaDTO>> BuscarTodos()
+        public async Task<BuscaPaginadaDTO<PessoaDTO>> BuscarTodos(string nome, int paginaAtual, int itensPorPagina)
         {
-            var pessoas = await _repository.BuscarTodos();
-            return _parser.Parse(pessoas);
-        }
+            Expression<Func<Pessoa, bool>> condicao = BuscarCondicaoPesquisa(nome);
 
-        public async Task<IEnumerable<PessoaDTO>> BuscarPorNome(string nome)
-        {
-            var pessoas = await _repository.BuscarPorNome(nome);
-            return _parser.Parse(pessoas);
+            var count = await _repository.BuscarCount(condicao);
+            var lista = await _repository.BuscarTodos(condicao, paginaAtual, itensPorPagina);
+
+            return new BuscaPaginadaDTO<PessoaDTO>(
+                paginaAtual,
+                itensPorPagina,
+                count,
+                _parser.Parse(lista));
         }
 
         public Task<bool> Excluir(int id)

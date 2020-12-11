@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using webapi.Business.Interfaces;
 using webapi.Data.Interfaces;
@@ -15,6 +17,12 @@ namespace webapi.Business
     {
         private readonly IRepository<Livro> _repository;
         private readonly LivroParser _parser;
+
+        private Expression<Func<Livro, bool>> BuscarFiltroPesquisa(string nome)
+        {
+            var filtro = nome?.ToLower() ?? "";
+            return livro => livro.Nome.ToLower().Contains(filtro);
+        }
 
         public LivroBusiness(IRepository<Livro> repository)
         {
@@ -47,10 +55,18 @@ namespace webapi.Business
             return _parser.Parse(livro);
         }
 
-        public async Task<IEnumerable<LivroDTO>> BuscarTodos()
+        public async Task<BuscaPaginadaDTO<LivroDTO>> BuscarTodos(string nome, int paginaAtual, int itensPagina)
         {
-            var livros = await _repository.BuscarTodos();
-            return _parser.Parse(livros);
+            Expression<Func<Livro, bool>> filtro = BuscarFiltroPesquisa(nome);
+
+            var count = await _repository.BuscarCount(filtro);
+            var lista = await _repository.BuscarTodos(filtro, paginaAtual, itensPagina);
+
+            return new BuscaPaginadaDTO<LivroDTO>(
+                paginaAtual,
+                itensPagina,
+                count,
+                _parser.Parse(lista));
         }
 
         public Task<bool> Excluir(int id)
@@ -62,5 +78,6 @@ namespace webapi.Business
         {
             return _repository.RegistroExiste(id);
         }
+
     }
 }
